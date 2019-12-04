@@ -1,9 +1,8 @@
 # Snakemake Homework
-@(Teaching)
 
 In this homework, you will design and build a small snakemake workflow to parallel the homework on Transcriptomics. I have generated a smaller subset-ed version of the data used in Homework 3 in `/vortexfs1/omics/env-bio/collaboration/fastq_test` so that the data run more quickly-- but feel free to use the full data sets if you want. 
 
-**The goal here is to: **
+**The goal here is to:**
 1. Trim the data using `trim_galore` 
 2. Create an index of the reference transcriptome for `salmon`
 2. Align the trimmed data against the reference transcriptome using `salmon quant`
