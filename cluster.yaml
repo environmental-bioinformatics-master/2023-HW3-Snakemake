@@ -1,0 +1,45 @@
+__default__: #These are the default values! If a rule doesn't exist these values will be used.  
+    system: 'slurm' #check if system is defined below
+    account: USERNAME #requred
+    time: 120 # minutes
+    mem: 10 # GB
+    threads: 8 # Number of Threads
+    queue: compute # QUEUE USED
+    nodes: 1 # NUMBER OF NODES
+    command_options:
+        slurm:
+            command: "sbatch --parsable"
+            key_mapping:
+            name: "--job-name={}"
+            threads: "-n {}"
+            mem: "--mem={}g"
+            account: "--account={}"
+            queue: "--partition={}"
+            time: "--time={}"
+            nodes: "-N {}"      # ntasks: 24
+
+trim_galore: 
+    queue: compute
+    threads: 4
+    mem: 10
+    time: 720
+
+salmon_index: 
+    queue:
+    threads: 
+    mem: 
+    time: 
+
+salmon_quant: 
+    queue: 
+    threads:
+    mem:
+    time: 
+
+salmon_merge:
+    queue: 
+    threads: 
+    mem: 
+    time: 
+
+
