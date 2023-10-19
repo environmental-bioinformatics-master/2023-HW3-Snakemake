@@ -1,6 +1,6 @@
 __default__: #These are the default values! If a rule doesn't exist these values will be used.  
     system: 'slurm' #check if system is defined below
-    account: USERNAME #requred
+    account: USERNAME #required
     time: 120 # minutes
     mem: 10 # GB
     threads: 8 # Number of Threads

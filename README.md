@@ -1,6 +1,12 @@
-# Snakemake Homework
+# Homework 3: Pipelines, integration, Snakemake
 
-In this homework, you will design and build a small snakemake workflow to parallel the homework on Transcriptomics. I have generated a smaller subset-ed version of the data used in Homework 3 in `/vortexfs1/omics/env-bio/collaboration/fastq_test` so that the data run more quickly-- but feel free to use the full data sets if you want. 
+### Description:
+
+In class, we discussed why, especially for larger workflows, writing the _logic_ of a path from input data to programmatic steps to eventual outputs is often preferable to writing steps out explicitly. **Snakemake** is our path to writing abstract functions to represent each data processing step. Goodbye repetitive code blocks and [some of] our annoying typos! 
+
+In this homework, you will design and build a small `Snakemake` workflow. This assignment is the precursor to Homework 5: Gene Expression, in which we will use the steps that you will automate using `Snakemake` to achieve a biological goal (assessing differential expression). In this homework, we will use the same data that will be used in Homework 5; the data is stored in `/vortexfs1/omics/env-bio/collaboration/HW4_files`. While the sequence files are technically small enough to be allowed on `GitHub`, they take up enough space that we don't want each of you making a separate copy on the HPC, where space is precious. (The files shared by the authors are not published, so this is also a way to share those with you privately.) You are going to access these samples using a "symbolic link", a neat trick to let everybody work with the **same** reference samples in a central location accessible to all. This is especially handy for raw data or databases: files that are large and that will be accessed for multiple projects and/or by multiple users. Check out the manual page for `ln` in order to do this; you'll report your work below.
+
+Remember: you will use this _same Snakemake workflow_ and _same data files_ for part of Homework 5. So, as you complete this homework, think of the steps as though they're helping you to complete your gene expression project. Additionally, as long as everything has gone according to plan with this assignment, you'll be able to use the outputs from this assignment as the inputs to Homework 5, allowing you to skip some computation for that assignment. 
 
 **The goal here is to:**
 1. Trim the data using `trim_galore` 
@@ -21,62 +27,51 @@ Take a look at the `Snakefile` that I provided for you.  As you can see I have s
 ## 0. Getting ready
 First, open up tmux and spin up a srun session to work in (e.g. `srun -p scavenger --time=12:00:00 --ntasks-per-node=6 --mem=20gb --pty bash`)
 
-Then, source activate your snakemake environment that you were using in class (likely `snakemake-class`). 
+Then, `source activate` your `Snakemake` environment that you were using in class (this is likely to be named `snakemake-class`, though you might have named it something different). 
 
 Finally, *link* (don't copy) all the data (`*fastq.gz` files) from the above directory into your local working environment in a folder called `raw_data`. So, your file structure should look like:
 
 ```bash
 Homework6-Snakemake/
 ├── raw_data/
-│   ├── SRR5004078_1.fastq.gz 
-│   ├── SRR5004080_1.fastq.gz 
-│   ├── SRR5004082_1.fastq.gz
-│   ├── SRR5004083_1.fastq.gz 
-│   ├── SRR5004085_1.fastq.gz 
-│   ├── SRR5004090_1.fastq.gz 
-│   ├── SRR5004091_1.fastq.gz 
-│   ├── SRR5004093_1.fastq.gz 
-│   ├── SRR5004094_1.fastq.gz 
-│   ├── SRR5004095_1.fastq.gz 
-│   ├── SRR5004096_1.fastq.gz 
-│   └── SRR5004097_1.fastq.gz 
+│   ├── S_debilis_eye_assembly_clean.fasta
+│   └── ... other files from `/vortexfs1/omics/env-bio/collaboration/HW4_files`
 └── Snakefile
 ```
 
-**Report the command you used to link the data:**
+Hence, you should see a new "file" named `raw_data` in your HW3 directory. You should see a list of 20 gzipped samples, plus `S_debilis_eye_assembly_clean.fasta` and `S_debilis_eye_assembly_clean_GO_annotation.fasta`. If you do - awesome! If not, double-check your path and try again (and maybe Google around for more guidance on creating and using symbolic links).
+
+**Report the command you used to symbolically link the data:**
 ```
 
 ```
+
+Now you can use `raw_data` as if it were a directory with all the files in them. It points right to the single centralized repository and lets you use those files without having to duplicate them in your own space.
 
 Now you are ready to start designing the pipeline. 
 
 ## 1. Trim Galore! 
 Take a look at the `Snakefile` that was provided. You should see that you have one rule uncommented `rule trim_galore:`. To make this rule work you need to do a few things:
-1. Define the `WILDCARDS` variable at the top to create a list of all the SRR files in the `raw_data/` directory.  
+1. Define the `WILDCARDS` variable at the top to create a list of all the SRR files in the `raw_data/` directory (Note: _do not_ trim the `fasta` and the `tab` file that you also symbolically linked. This is a good example of how to use wildcards!).  
 2. Use the `WILDCARDS`to design two `expand()` statements that create the output file lists for the fastqc output and trimmed fastq file from `trim_galore`. 
     **Note:** 
-    - I want all files from this rule to be output into a directory called `outputs/trimqc/` so this should be in your expand statement.  
+    - I want all files from this rule to be output into a directory called `outputs/trimqc/`, so this should be specified in your expand statement.  
     - The tail of the fastqc output file looks like: `_trimmed_fastqc.zip`
     - The tail of the trimmed fastq file looks like: `_trimmed.fq.gz`
 3. Fill in the appropriate `input` and `output` in the rule. 
-4. Comment your rule please! 
+4. Comment your rule with descriptive information on your approach please! 
 
-It may be helpful to test out the wildcards and expand statements in a python interpreter like we did in class (with `from snakemake.io import *`). 
+It may be helpful to test out the wildcards and expand statements in a Python interpreter like we did in class (with `from snakemake.io import *`). 
 
-Once you have filled in the wildcards and expand statements you can start testing and refining this rule and the wildcards using the command: `snakemake --use-conda -p`. If it works, it should begin working through each of the files and creating the output. At the end of your run you should have a new set of files that look like this: 
+Once you have filled in the wildcards and expand statements, you can start testing and refining this rule and the wildcards using the command: `snakemake --use-conda -p`. If it works, it should begin working through each of the files and creating the output. At the end of your run, you should have a new set of files that look like this: 
 
 ```bash
 outputs/
 └── trimqc
-    ├── SRR5004078_1.fastq.gz_trimming_report.txt
-    ├── SRR5004078_1_trimmed_fastqc.html
-    ├── SRR5004078_1_trimmed_fastqc.zip
-    ├── SRR5004078_1_trimmed.fq.gz
-    ├── SRR5004080_1.fastq.gz_trimming_report.txt
-    ├── SRR5004080_1_trimmed_fastqc.html
-    ├── SRR5004080_1_trimmed_fastqc.zip
-    ├── SRR5004080_1_trimmed.fq.gz
-    ├── SRR5004082_1.fastq.gz_trimming_report.txt
+    ├── SRR11048278_1_hw3.fq.gz_trimming_report.txt
+    ├── SRR11048278_1_hw3_trimmed_fastqc.html
+    ├── SRR11048278_1_hw3_trimmed_fastqc.zip
+    ├── SRR11048278_1_hw3_trimmed.fq.gz
 ... etc.
 ```
 
@@ -87,20 +82,21 @@ Copy and paste your final functioning `trim_galore` rule here:
 
 ```
 
-> **QUESTION:** Here, many files are created by trim_galore (4 to be exact). What are the benefits of tracking all of them vs only some of them? Does it matter? 
+> **QUESTION:** Here, many files are created by trim_galore (4 to be exact). What are the benefits of tracking all of them vs. only some of them? Does it matter? 
 
 > **ANSWER**: 
 
 
 ## 2. Salmon Index
- Once you have gotten the first rule working you are ready to move on to the `salmon` alignment and quantification!
+
+Once you have gotten the first rule working, you are ready to move on to the `salmon` alignment and quantification!
 
 The first step in `salmon` is creating an index that reads can be aligned again. This is done with the command:  
 ```bash
-salmon index -t YOUR TRANSCRIPTOME -i SALMON_INDEX_DIRECTORY -k 25` 
+salmon index -t YOUR TRANSCRIPTOME -i SALMON_INDEX_DIRECTORY -k 25
 ```
 
-Where `-t` indicates the path to your transcriptome fasta file and `-i` is the name of the index *directory* that will be created. Often, programs don't create a single file and it is easier to track a whole directory. For that you can use the call `directory()` command (see the value of `SALMON_INDEX`). 
+Where `-t` indicates the path to your transcriptome fasta file and `-i` is the name of the index *directory* that will be created. Often, programs don't create a single file and it is easier to track a whole directory. For that, you can use the call `directory()` command (see the value of `SALMON_INDEX`). 
 
 For this rule, I have provided the appropriate input and output values. 
 
@@ -115,7 +111,7 @@ Copy and paste your final functioning `salmon_index` rule here:
 ```
 
 ## 3. Salmon Quantification
-Now, write a new rule called `salmon_quant` (there is a commented line in the current code that you can work off of). 
+Now, write a new rule called `salmon_quant` (there is a commented line in the current code that you can use to begin your rule). 
 
 This rule should do the following: 
 1. Run the command: 
@@ -131,24 +127,16 @@ When it has worked, you should have a file structure that looks something like t
 
 ```bash
 ├── quant
-│   ├── SRR5004078
+│   ├── SRR11048278
 │   │   ├── aux_info
 │   │   ├── cmd_info.json
 │   │   ├── lib_format_counts.json
 │   │   ├── libParams
 │   │   ├── logs
 │   │   └── quant.sf
-│   ├── SRR5004080
-│   ├── SRR5004082
-│   ├── SRR5004083
-│   ├── SRR5004085
-│   ├── SRR5004090
-│   ├── SRR5004091
-│   ├── SRR5004093
-│   ├── SRR5004094
-│   ├── SRR5004095
-│   ├── SRR5004096
-│   └── SRR5004097
+│   ├── SRR11048280
+│   ├── SRR11048282
+│   └── ... other SRR files
 ```
  Hints: It  might be helpful to look back at the `directory()` command above. Also note that the `directory()` command can be combined with  `expand()` command.  
 
@@ -184,13 +172,13 @@ Copy and paste your final functioning `salmon_merge` rule here:
 
 ```
 
-##5. Snakemake-ing on `slurm`
+## 5. `Snakemake`-ing on `slurm`
 
-Now, it is time to get `snakemake` to run `slurm` for you. To do this, I have provided a file called `cluster.yaml`. Open it up and take a look. This is the file that describes the resources required for running this file on slurm. The top `__default__: ` specifies default parameters. You don't need to change any of these except `account`. Here you should fill in your slurm username. But, you can see that some important info is provided (like run time in minutes, memory in GB). 
+Now, it is time to get `Snakemake` to run `slurm` for you. To do this, I have provided a file called `cluster.yaml`. Open it up and take a look. This is the file that describes the resources required for running this file on `slurm`. The top `__default__: ` specifies default parameters. You don't need to change any of these except `account`. Here you should fill in your slurm username. But, you can see that some important info is provided (like run time in minutes, memory in GB). 
 
-Below this you will see each of the rules you wrote specified. I have filled in one rule with requirements already for you (`trim_galore`). For the others, I leave it to you to fill in the requirements. Follow the formatting of the first rule, fill in the others. It might be helpful to look back at the suggested slurm requirements for the other rules in Homework 3.
+Below this you will see each of the rules you wrote specified. I have filled in one rule with requirements already for you (`trim_galore`). For the others, I leave it to you to fill in the requirements. Follow the formatting of the first rule, fill in the others.
 
-Once you have saved the cluster file it is time to execute it on slurm. Generally, this is the command that you would use to do it (also saved in the file `submit_snakemake.sh`):
+Once you have saved the cluster file, it is time to execute it on slurm. Generally, this is the command that you would use to do it (also saved in the file `submit_snakemake.sh`):
 
 ```bash
 snakemake --jobs 20 --use-conda --cluster-config cluster.yaml --cluster "sbatch --parsable --partition={cluster.queue} --job-name=ENVBIO.{rule}.{wildcards} --mem={cluster.mem}gb --time={cluster.time} --ntasks={cluster.threads} --nodes={cluster.nodes}"
@@ -206,20 +194,18 @@ Now, make sure you are in `tmux` and are running the `snakemake` environment and
 
 Create a new pane with tmux (`ctrl+B "`) and type `squeue -u YOUR_USERNAME`. You should see many jobs running under your username. Save the output of squeue to a file called `slurmjobs.list`. 
 
-Allow snakemake to run to fruition! When it has finished-- navigate into the hidden folder `.snakemake/log`. Here, you should see all the log files from everytime you ran snakemake. Copy the last snakemake log file to your main directory `Homework6-Snakemake` and call it `snakemake-final-run.log`. 
+Allow snakemake to run to fruition! When it has finished-- navigate into the hidden folder `.snakemake/log`. Here, you should see all the log files from everytime you ran snakemake. Copy the last snakemake log file to your main directory of this `GitHub` repository and call it `snakemake-final-run.log`. 
 
 ## You have finished! 
+
 Congratulations! 
 
 Please estimate how long this homework took you here: 
 
-For the final submission, please add the following files to your git:
+For the final submission, please add the following files to `GitHub`:
 - `README.md`
 - `Snakefile`
 - `cluster.yaml`
 - `snakemake-final-run.log`
 - `slurmjobs.list`
 - `output/quant/salmon_merged.counts`
-
-
-
