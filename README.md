@@ -63,7 +63,7 @@ Take a look at the `Snakefile` that was provided. You should see that you have t
 
 It may be helpful to test out the wildcards and expand statements in a Python interpreter like we did in class (with `from snakemake.io import *`). 
 
-Once you have filled in the wildcards and expand statements, you can start testing and refining this rule and the wildcards using the command: `snakemake --use-conda -p`. If it works, it should begin working through each of the files and creating the output. At the end of your run, you should have a new set of files that look like this: 
+Once you have filled in the wildcards and expand statements, you can start testing and refining this rule and the wildcards using the command: `snakemake --use-conda -p -j 1`. If it works, it should begin working through each of the files and creating the output. At the end of your run, you should have a new set of files that look like this: 
 
 ```bash
 outputs/
@@ -88,12 +88,12 @@ Copy and paste your final functioning `trim_galore` rule here:
 
 ```
 
-> **QUESTION:** Here, many files are created by trim_galore (4 to be exact). What are the benefits of tracking all of them vs. only some of them? Does it matter? 
+> **QUESTION:** Here, many files are created by trim_galore (4 to be exact). What are the benefits of tracking all of them with Snakemake vs. only some of them? Does it matter? 
 
 > **ANSWER**: 
 
 
-> **CHALLENGE QUESTION:** Is it necessary to write two rules, one for the forward reads and one for the reverse reads? How might you modify this Snakefile to work differently?
+> **BONUS QUESTION:** Here we wrote two rules, one for the forward reads and one for the reverse reads. How might you modify this snakefile to have one rule that processess both forward and reverse files?
 
 > **ANSWER**: 
 
