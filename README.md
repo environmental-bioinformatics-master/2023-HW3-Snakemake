@@ -107,14 +107,14 @@ The first step in `salmon` is creating an index that reads can be aligned again.
 salmon index -t YOUR TRANSCRIPTOME -i SALMON_INDEX_DIRECTORY -k 25
 ```
 
-Where `-t` indicates the path to your transcriptome fasta file (this is one of the files you symbolically linked, `S_debilis_eye_assembly_clean.fasta`) and `-i` is the name of the index *directory* that will be created. Often, programs don't create a single file and it is easier to track a whole directory. For that, you can use the call `directory()` command (see the value of `SALMON_INDEX`). 
+Where `-t` indicates the path to your transcriptome fasta file (this is one of the files you symbolically linked, `S_debilis_eye_assembly_clean.fasta`) and `-i` is the name of the index *directory* that will be created. Often, programs don't create a single file and it is easier to track a whole directory. For that, you can use the Snakemake call `directory()` which looks for a directory rather than a file. We have set that up in the header for you already-- see the `SALMON_INDEX` variable. 
 
-For this rule, I have provided the appropriate input and output values. 
+For this rule, I have provided the appropriate input and output values for you already. 
 
 Here, you need to:
 1. Uncomment the `salmon_index` rule. 
 2. Fill in the shell command with appropriate wild cards. 
-3. Create the yaml file (`envs/salmon.yaml`). Hint: take a look at the `fastqc.yaml` file to get an idea of how to structure it. 
+3. Create the yaml file (`envs/salmon.yaml`) that will define the conda environment for salmon to run. Hint: take a look at the `fastqc.yaml` file to get an idea of how to structure it. 
 
 Copy and paste your final functioning `salmon_index` rule here:
 ```
