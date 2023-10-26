@@ -35,7 +35,7 @@ Finally, *link* (don't copy) all the data (`*fastq.gz` files) from the above dir
 HW3-Snakemake-username/
 ├── raw_data/
 │   ├── S_debilis_eye_assembly_clean.fasta
-│   └── ... other files from `/vortexfs1/omics/env-bio/collaboration/HW4_files`
+│   └── ... other files from `/vortexfs1/omics/env-bio/collaboration/HW-Snakemake-Transcriptome-Data`
 └── Snakefile
 ```
 
