@@ -51,11 +51,11 @@ Now you can use `raw_data` as if it were a directory with all the files in them.
 Now you are ready to start designing the pipeline. 
 
 ## 1. Trim Galore! 
-Take a look at the `Snakefile` that was provided. You should see that you have one rule uncommented `rule trim_galore:`. To make this rule work you need to do a few things:
-1. Define the `WILDCARDS` variable at the top to create a list of all the SRR files in the `raw_data/` directory (Note: _do not_ trim the `fasta` and the `tab` file that you also symbolically linked. This is a good example of how to use wildcards!).  
-2. Use the `WILDCARDS`to design two `expand()` statements that create the output file lists for the fastqc output and trimmed fastq file from `trim_galore`. 
+Take a look at the `Snakefile` that was provided. You should see that you have two rules uncommented `rule trim_galore_forward:` and `rule trim_galore_reverse:`. To make these rule work you need to do a few things:
+1. Define the `SRRFILES` variable at the top to create a list of all the SRR files in the `raw_data/` directory (Note: _do not_ trim the `fasta` and the `tab` file that you also symbolically linked. This is a good example of how to use wildcards!).  
+2. Use the `SRRFILES`to design two `expand()` statements that create the output file lists for the fastqc output and trimmed fastq file from `trim_galore`. 
     **Note:** 
-    - I want all files from this rule to be output into a directory called `outputs/trimqc/`, so this should be specified in your expand statement.  
+    - I want all files from these rules to be output into two directories called `outputs/trimqc_forward/` and `outputs/trimqc_reverse/`, so this should be specified in your expand statement to tell `Snakemake` what final files you are expecting.  
     - The tail of the fastqc output file looks like: `_trimmed_fastqc.zip`
     - The tail of the trimmed fastq file looks like: `_trimmed.fq.gz`
 3. Fill in the appropriate `input` and `output` in the rule. 
@@ -67,11 +67,17 @@ Once you have filled in the wildcards and expand statements, you can start testi
 
 ```bash
 outputs/
-└── trimqc
+└── trimqc_forward
     ├── SRR11048278_1_hw3.fq.gz_trimming_report.txt
     ├── SRR11048278_1_hw3_trimmed_fastqc.html
     ├── SRR11048278_1_hw3_trimmed_fastqc.zip
     ├── SRR11048278_1_hw3_trimmed.fq.gz
+... etc.
+└── trimqc_reverse
+    ├── SRR11048278_2_hw3.fq.gz_trimming_report.txt
+    ├── SRR11048278_2_hw3_trimmed_fastqc.html
+    ├── SRR11048278_2_hw3_trimmed_fastqc.zip
+    ├── SRR11048278_2_hw3_trimmed.fq.gz
 ... etc.
 ```
 
@@ -87,6 +93,11 @@ Copy and paste your final functioning `trim_galore` rule here:
 > **ANSWER**: 
 
 
+> **CHALLENGE QUESTION:** Is it necessary to write two rules, one for the forward reads and one for the reverse reads? How might you modify this Snakefile to work differently?
+
+> **ANSWER**: 
+
+
 ## 2. Salmon Index
 
 Once you have gotten the first rule working, you are ready to move on to the `salmon` alignment and quantification!
@@ -96,7 +107,7 @@ The first step in `salmon` is creating an index that reads can be aligned again.
 salmon index -t YOUR TRANSCRIPTOME -i SALMON_INDEX_DIRECTORY -k 25
 ```
 
-Where `-t` indicates the path to your transcriptome fasta file and `-i` is the name of the index *directory* that will be created. Often, programs don't create a single file and it is easier to track a whole directory. For that, you can use the call `directory()` command (see the value of `SALMON_INDEX`). 
+Where `-t` indicates the path to your transcriptome fasta file (this is one of the files you symbolically linked, `S_debilis_eye_assembly_clean.fasta`) and `-i` is the name of the index *directory* that will be created. Often, programs don't create a single file and it is easier to track a whole directory. For that, you can use the call `directory()` command (see the value of `SALMON_INDEX`). 
 
 For this rule, I have provided the appropriate input and output values. 
 
@@ -116,10 +127,10 @@ Now, write a new rule called `salmon_quant` (there is a commented line in the cu
 This rule should do the following: 
 1. Run the command: 
 ```bash 
-salmon quant -i SALMON_INDEX_DIRECTORY -l A -r SRR_TRIMMMED_FASTQ --validateMappings -o OUTPUT_DIRECTORY_SRR
+salmon quant -i SALMON_INDEX_DIRECTORY -l A -1 SRR_TRIMMMED_FASTQ_1 -2 SRR_TRIMMMED_FASTQ_2 --validateMappings -o OUTPUT_DIRECTORY_SRR
 ```
-2. Run the above command for *each* of the SRR samples. Each sample should be saved into a *directory* that is the SRR sample id. 
-3.  It should depend on the creation of the salmon index file and the trimmed SRR data. 
+2. Run the above command for *each* of the SRR samples, specifying the separately trimmed forward and reverse reads from `trim_galore` in Step 1. Each sample should be saved into a *directory* that is the SRR sample id. 
+3.  It should depend on the creation of the salmon index file and the trimmed SRR data (forward and reverse reads). 
 4.  Each of the output directories should be located in `outputs/quant/`. 
 5. Comment your rule! 
 
@@ -176,7 +187,7 @@ Copy and paste your final functioning `salmon_merge` rule here:
 
 Now, it is time to get `Snakemake` to run `slurm` for you. To do this, I have provided a file called `cluster.yaml`. Open it up and take a look. This is the file that describes the resources required for running this file on `slurm`. The top `__default__: ` specifies default parameters. You don't need to change any of these except `account`. Here you should fill in your slurm username. But, you can see that some important info is provided (like run time in minutes, memory in GB). 
 
-Below this you will see each of the rules you wrote specified. I have filled in one rule with requirements already for you (`trim_galore`). For the others, I leave it to you to fill in the requirements. Follow the formatting of the first rule, fill in the others.
+Below this you will see each of the rules you wrote specified. I have filled in one rule with requirements already for you (`trim_galore_forward`). For the others, I leave it to you to fill in the requirements. Follow the formatting of the first rule, fill in the others.
 
 Once you have saved the cluster file, it is time to execute it on slurm. Generally, this is the command that you would use to do it (also saved in the file `submit_snakemake.sh`):
 

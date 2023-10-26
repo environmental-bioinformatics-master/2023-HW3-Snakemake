@@ -18,12 +18,18 @@ __default__: #These are the default values! If a rule doesn't exist these values
             time: "--time={}"
             nodes: "-N {}"      # ntasks: 24
 
-trim_galore: 
+trim_galore_forward: 
     queue: compute
     threads: 4
     mem: 10
     time: 720
 
+trim_galore_reverse: 
+    queue:
+    threads: 
+    mem: 
+    time: 
+    
 salmon_index: 
     queue:
     threads: 
