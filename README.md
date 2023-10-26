@@ -4,7 +4,7 @@
 
 In class, we discussed why, especially for larger workflows, writing the _logic_ of a path from input data to programmatic steps to eventual outputs is often preferable to writing steps out explicitly. **Snakemake** is our path to writing abstract functions to represent each data processing step. Goodbye repetitive code blocks and [some of] our annoying typos! 
 
-In this homework, you will design and build a small `Snakemake` workflow. This assignment is the precursor to Homework 5: Gene Expression, in which we will use the steps that you will automate using `Snakemake` to achieve a biological goal (assessing differential expression). In this homework, we will use the same data that will be used in Homework 5; the data is stored in `/vortexfs1/omics/env-bio/collaboration/HW4_files`. While the sequence files are technically small enough to be allowed on `GitHub`, they take up enough space that we don't want each of you making a separate copy on the HPC, where space is precious. (The files shared by the authors are not published, so this is also a way to share those with you privately.) You are going to access these samples using a "symbolic link", a neat trick to let everybody work with the **same** reference samples in a central location accessible to all. This is especially handy for raw data or databases: files that are large and that will be accessed for multiple projects and/or by multiple users. Check out the manual page for `ln` in order to do this; you'll report your work below.
+In this homework, you will design and build a small `Snakemake` workflow. This assignment is the precursor to Homework 5: Gene Expression, in which we will use the steps that you will automate using `Snakemake` to achieve a biological goal (assessing differential expression). In this homework, we will use the same data that will be used in Homework 5; the data are stored in `/vortexfs1/omics/env-bio/collaboration/HW4_files`. While the sequence files are technically small enough to be allowed on `GitHub`, they take up enough space that we don't want each of you making a separate copy on the HPC, where space is precious. (The files shared by the authors are not published, so this is also a way to share those with you privately.) You are going to access these samples using a "symbolic link", a neat trick to let everybody work with the **same** reference samples in a central location accessible to all. This is especially handy for raw data or databases: files that are large and that will be accessed for multiple projects and/or by multiple users. Check out the manual page for `ln` in order to do this; you'll report your work below.
 
 Remember: you will use this _same Snakemake workflow_ and _same data files_ for part of Homework 5. So, as you complete this homework, think of the steps as though they're helping you to complete your gene expression project. Additionally, as long as everything has gone according to plan with this assignment, you'll be able to use the outputs from this assignment as the inputs to Homework 5, allowing you to skip some computation for that assignment. 
 
@@ -12,22 +12,22 @@ Remember: you will use this _same Snakemake workflow_ and _same data files_ for 
 1. Trim the data using `trim_galore` 
 2. Create an index of the reference transcriptome for `salmon`
 2. Align the trimmed data against the reference transcriptome using `salmon quant`
-3. Merge the counts produced in the 
+3. Merge the counts produced in the separate quantification steps into a single table
 
 First, you should see that you have a skeleton of a `Snakefile`. Take a look at what is already provided. At the end you should have a fully functional `Snakefile` that is able to recreate the first part of the analyses from the last homework with one command. 
 
 This homework is designed to be done in order working command by command. Do not try to skip ahead! Work through one by one as each step builds on the previous. 
 
-Take a look at the `Snakefile` that I provided for you.  As you can see I have sketched out the general structure and partially written two rules for you. You are going to be: 
+Take a look at the `Snakefile` provided for you. The general structure has been sketched out for you and two rules have been partially written. You are going to be: 
 
 1. Filling in the wildcards and expand statements to make `trim_galore` rule work. 
 2. Writing a yaml file for salmon and fixing the shell command of the `salmon_index` rule. 
-3. Writing (de novo) a rule for  `salmon_quant` and a rule for `salmon_merge`. 
+3. Writing (_de novo_) a rule for  `salmon_quant` and a rule for `salmon_merge`. 
 
 ## 0. Getting ready
 First, open up tmux and spin up a srun session to work in (e.g. `srun -p scavenger --time=12:00:00 --ntasks-per-node=6 --mem=20gb --pty bash`)
 
-Then, `source activate` your `Snakemake` environment that you were using in class (this is likely to be named `snakemake-class`, though you might have named it something different). 
+Then, `conda activate` your `Snakemake` environment that you were using in class (this is likely to be named `snakemake-class`, though you might have named it something different). 
 
 Finally, *link* (don't copy) all the data (`*fastq.gz` files) from the above directory into your local working environment in a folder called `raw_data`. So, your file structure should look like:
 
