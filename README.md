@@ -8,6 +8,8 @@ In this homework, you will design and build a small `Snakemake` workflow. This a
 
 Remember: you will use this _same Snakemake workflow_ and _same data files_ for part of the homework on Gene Expresion. So, as you complete this homework, think of the steps as though they're helping you to complete your gene expression project. Additionally, as long as everything has gone according to plan with this assignment, you'll be able to use the outputs from this assignment as the inputs to that homework, allowing you to skip some computation for that assignment. 
 
+**IMPORTANT: You will not actually execute and run the pipeline until Step 5.** Rather you will be testing each new rule using the flag `--dryrun` to simply test that the DAG is being correctly made and that the rules are constructed correctly. You will use slurm to actually submit the pipeline in Step 5. 
+
 **The goal here is to:**
 1. Trim the data using `trim_galore` 
 2. Create an index of the reference transcriptome for `salmon`
@@ -63,7 +65,7 @@ Take a look at the `Snakefile` that was provided. You should see that you have t
 
 It may be helpful to test out the wildcards and expand statements in a Python interpreter like we did in class (with `from snakemake.io import *`). 
 
-Once you have filled in the wildcards and expand statements, you can start testing and refining this rule and the wildcards using the command: `snakemake --use-conda -p -j 1`. If it works, it should begin working through each of the files and creating the output. At the end of your run, you should have a new set of files that look like this: 
+Once you have filled in the wildcards and expand statements, you can start testing and refining this rule and the wildcards using the command: `snakemake --use-conda --dryrun -j 1`. If it works, it should begin working through each of the files and creating the output. At the end of your run, you should have a new set of files that look like this: 
 
 ```bash
 outputs/
