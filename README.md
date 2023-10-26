@@ -52,8 +52,8 @@ Now you are ready to start designing the pipeline.
 
 ## 1. Trim Galore! 
 Take a look at the `Snakefile` that was provided. You should see that you have two rules uncommented `rule trim_galore_forward:` and `rule trim_galore_reverse:`. To make these rule work you need to do a few things:
-1. Define the `SRRFILES` variable at the top to create a list of all the SRR files in the `raw_data/` directory (Note: _do not_ trim the `fasta` and the `tab` file that you also symbolically linked. This is a good example of how to use wildcards!).  
-2. Use the `SRRFILES`to design two `expand()` statements that create the output file lists for the fastqc output and trimmed fastq file from `trim_galore`. 
+1. Define the `SRR_NUMBERS` variable at the top to create a list of all the SRR nubmers in the `raw_data/` directory. This should populate a list of SRR numbers in the form "SRR11048282" (Note: _do not_ trim the `fasta` and the `tab` file that you also symbolically linked. This is a good example of how to use wildcards!).  
+2. Use the `SRR_NUMBERS`to design two `expand()` statements that create the output file lists for the fastqc output and trimmed fastq file from `trim_galore`. 
     **Note:** 
     - I want all files from these rules to be output into two directories called `outputs/trimqc_forward/` and `outputs/trimqc_reverse/`, so this should be specified in your expand statement to tell `Snakemake` what final files you are expecting.  
     - The tail of the fastqc output file looks like: `_trimmed_fastqc.zip`
