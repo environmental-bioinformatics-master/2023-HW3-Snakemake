@@ -4,9 +4,9 @@
 
 In class, we discussed why, especially for larger workflows, writing the _logic_ of a path from input data to programmatic steps to eventual outputs is often preferable to writing steps out explicitly. **Snakemake** is our path to writing abstract functions to represent each data processing step. Goodbye repetitive code blocks and [some of] our annoying typos! 
 
-In this homework, you will design and build a small `Snakemake` workflow. This assignment is the precursor to Homework 5: Gene Expression, in which we will use the steps that you will automate using `Snakemake` to achieve a biological goal (assessing differential expression). In this homework, we will use the same data that will be used in Homework 5; the data are stored in `/vortexfs1/omics/env-bio/collaboration/HW4_files`. While the sequence files are technically small enough to be allowed on `GitHub`, they take up enough space that we don't want each of you making a separate copy on the HPC, where space is precious. (The files shared by the authors are not published, so this is also a way to share those with you privately.) You are going to access these samples using a "symbolic link", a neat trick to let everybody work with the **same** reference samples in a central location accessible to all. This is especially handy for raw data or databases: files that are large and that will be accessed for multiple projects and/or by multiple users. Check out the manual page for `ln` in order to do this; you'll report your work below.
+In this homework, you will design and build a small `Snakemake` workflow. This assignment is the precursor to the homework on Gene Expression, in which we will use the steps that you will automate using `Snakemake` to achieve a biological goal (assessing differential expression). In this homework, we will use the same data that will be used in Homework 5; the data are stored in `/vortexfs1/omics/env-bio/collaboration/HW-Snakemake-Transcriptome-Data`. While the sequence files are technically small enough to be allowed on `GitHub`, they take up enough space that we don't want each of you making a separate copy on the HPC, where space is precious. (The files shared by the authors are not published, so this is also a way to share those with you privately.) You are going to access these samples using a "symbolic link", a neat trick to let everybody work with the **same** reference samples in a central location accessible to all. This is especially handy for raw data or databases: files that are large and that will be accessed for multiple projects and/or by multiple users. Check out the manual page for `ln` in order to do this; you'll report your work below.
 
-Remember: you will use this _same Snakemake workflow_ and _same data files_ for part of Homework 5. So, as you complete this homework, think of the steps as though they're helping you to complete your gene expression project. Additionally, as long as everything has gone according to plan with this assignment, you'll be able to use the outputs from this assignment as the inputs to Homework 5, allowing you to skip some computation for that assignment. 
+Remember: you will use this _same Snakemake workflow_ and _same data files_ for part of the homework on Gene Expresion. So, as you complete this homework, think of the steps as though they're helping you to complete your gene expression project. Additionally, as long as everything has gone according to plan with this assignment, you'll be able to use the outputs from this assignment as the inputs to that homework, allowing you to skip some computation for that assignment. 
 
 **The goal here is to:**
 1. Trim the data using `trim_galore` 
@@ -32,7 +32,7 @@ Then, `conda activate` your `Snakemake` environment that you were using in class
 Finally, *link* (don't copy) all the data (`*fastq.gz` files) from the above directory into your local working environment in a folder called `raw_data`. So, your file structure should look like:
 
 ```bash
-Homework6-Snakemake/
+2023-HW3-Snakemake/
 ├── raw_data/
 │   ├── S_debilis_eye_assembly_clean.fasta
 │   └── ... other files from `/vortexfs1/omics/env-bio/collaboration/HW4_files`
