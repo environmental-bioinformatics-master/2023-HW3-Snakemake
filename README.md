@@ -32,7 +32,7 @@ Then, `conda activate` your `Snakemake` environment that you were using in class
 Finally, *link* (don't copy) all the data (`*fastq.gz` files) from the above directory into your local working environment in a folder called `raw_data`. So, your file structure should look like:
 
 ```bash
-2023-HW3-Snakemake/
+HW3-Snakemake-username/
 ├── raw_data/
 │   ├── S_debilis_eye_assembly_clean.fasta
 │   └── ... other files from `/vortexfs1/omics/env-bio/collaboration/HW4_files`
