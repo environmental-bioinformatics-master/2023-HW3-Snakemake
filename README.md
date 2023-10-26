@@ -220,3 +220,4 @@ For the final submission, please add the following files to `GitHub`:
 - `snakemake-final-run.log`
 - `slurmjobs.list`
 - `output/quant/salmon_merged.counts`
+- `envs/salmon.yaml'
